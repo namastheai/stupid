@@ -1,0 +1,56 @@
+from collections import deque
+def Water_Jug_problem(X, Y, j1, j2, target):
+    queue = deque()
+    visited = set()
+    path = {}
+    queue.append((0, 0))
+    visited.add((0, 0))
+    path[(0, 0)] = None
+    while queue:
+        current = queue.popleft()
+        current_j1, current_j2 = current
+        if current_j1 == target or current_j2 == target:
+            result_path = []
+            while current:
+                result_path.append(current)
+                current = path[current]
+            return result_path[::-1]
+        next_states = [
+            (X, current_j2),  # Fill jug 1
+            (current_j1, Y),  # Fill jug 2
+            (0, current_j2),  # Empty jug 1
+            (current_j1, 0),  # Empty jug 2
+            (current_j1 - min(current_j1, Y - current_j2), current_j2 + min(current_j1, Y - current_j2)),  # Pour jug 1 into jug 2
+            (current_j1 + min(current_j2, X - current_j1), current_j2 - min(current_j2, X - current_j1))   # Pour jug 2 into jug 1
+        ]
+        for state in next_states:
+            if state not in visited:
+                visited.add(state)
+                queue.append(state)
+                path[state] = current
+    return None
+def positive(n):
+    while True:
+        try:
+            value = int(input(n))
+            if value <= 0:
+                raise ValueError("Please enter positive values only.")
+            return value
+        except ValueError:
+            print("Please enter positive values only.")
+J1 = positive("Enter the volume of the first jug: ")
+J2 = positive("Enter the volume of the second jug: ")
+L = positive("Enter the target volume: ")
+
+if J1 < L and J2 < L:
+    print("Not possible")
+else:
+    path = Water_Jug_problem(J1, J2, J1, J2, L)
+    if path:
+        print("Path is as follows:")
+        for state in path:
+            print(f"Jug1: {state[0]}, Jug2: {state[1]}")
+        print("Solution found.")
+    else:
+        print("Solution not found.")
+ 
